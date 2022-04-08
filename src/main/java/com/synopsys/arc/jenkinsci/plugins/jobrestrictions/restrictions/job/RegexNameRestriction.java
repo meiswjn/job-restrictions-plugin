@@ -61,11 +61,13 @@ public class RegexNameRestriction extends JobRestriction {
     @Override
     public boolean canTake(Queue.BuildableItem item) {
         //FIXME: switch to  the "getFullName" in the future
-        return canTake(QueueHelper.getFullName(item));
+        return canTake(QueueHelper.getName(item, isCheckShortName()));
     }
     
     @Override
     public boolean canTake(Run run) {
+        if (isCheckShortName())
+            return canTake(run.getParent().getName());
         return canTake(run.getParent().getFullName());
     }
     

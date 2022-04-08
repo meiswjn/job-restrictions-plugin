@@ -40,34 +40,45 @@ public class QueueHelper {
 
     //TODO: Optimize by StringBuilder
     /**
-     * Generates job-style project name for the buildable item
-     * @deprecated Just a hack, will be removed in the future versions
-     * @param item Item, for which the name should be retrieved
-     * @return String in the {@link Job#getFullName()} format (a/b/c/d)
+     * Generates job-style project name for the buildable item.
+     * @deprecated as of 0.9. Use {@link #getName(Queue.BuildableItem, boolean)}.
+     * @param item Item, for which the name should be retrieved.
+     * @return String in the {@link Job#getFullName()} format (Folder/SubFolder/.../Pipeline).
      */
     @Deprecated
     public static String getFullName(@Nonnull Queue.BuildableItem item) {
-        Queue.Task current = item.task;
-        String res = getItemName(current);
+        return getName(item, false);
+    }
 
-        // this is only executed if we didn't call Item.getFullName() in getItemName
-        while (!(current instanceof Item)) {
-            Queue.Task parent = current.getOwnerTask();
-            if (parent == current || parent == null) {
-                break;
+    //TODO: Optimize by StringBuilder
+    /**
+     * Generates job-style project name for the buildable item.
+     * @param item Item, for which the name should be retrieved.
+     * @param shortName Boolean whether to ignore the path (Folders) and only match the pipeline's name.
+     * @return String in the {@link Job#getFullName()} format 'Folder/SubFolder/.../Pipeline'. If shortName is true, only 'Pipeline'.
+     */
+    static String getName(@Nonnull Queue.BuildableItem item, boolean shortName) {
+        Queue.Task current = item.task;
+        String res = getItemName(current, shortName);
+
+        if (!shortName) {
+            // this is only executed if we didn't call Item.getFullName() in getItemName
+            while (!(current instanceof Item)) {
+                Queue.Task parent = current.getOwnerTask();
+                if (parent == current || parent == null) {
+                    break;
+                }
+                res = getItemName(parent, shortName) + "/" + res;
+                current = parent;
             }
-            res = getItemName(parent) + "/" + res;
-            current = parent;
         }
         return res;
     }
 
-    private static String getItemName(Queue.Task task) {
-        if (task instanceof Item) {
-            Item stub = (Item)task;
-            return stub.getFullName();
-        } else {
+    private static String getItemName(Queue.Task task, boolean shortName) {
+        if (shortName || (!(task instanceof Item))) {
             return task.getName();
         }
+        return ((Item) task).getFullName();
     }
 }

@@ -26,7 +26,7 @@
     <f:entry title="${%Expression}" field="regexExpression">
         <f:textbox/>
     </f:entry>
-    <f:entry title="${%Check short name}" field="checkShortName">
+    <f:entry title="${%Only check short name}" field="checkShortName">
         <f:checkbox/>
     </f:entry>
 </j:jelly>
