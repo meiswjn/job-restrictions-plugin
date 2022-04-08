@@ -47,7 +47,7 @@ public class JobRestrictionTestHelper {
      * @return Created project
      * @throws IOException 
      */
-    public static <T extends TopLevelItem> T createJob(JenkinsRule j, Class<T> type, JobCauseRestriction ... restrictions) 
+    public static <T extends TopLevelItem> T createJob(JenkinsRule j, Class<T> type, JobCauseRestriction ... restrictions)
             throws IOException {
         T job = j.jenkins.<T>createProject(type, "testProject");
         //TODO: prettify conversion
@@ -55,6 +55,27 @@ public class JobRestrictionTestHelper {
         for (JobCauseRestriction r : restrictions) {
             builder.addCauseRestriction(r);
         }            
+        builder.applyTo((Job)job);
+        return job;
+    }
+    /**
+     * Creates a job with specified cause restrictions.
+     * @param <T> Class of the job to be created
+     * @param j Jenkins rule
+     * @param type Type of the job for class automatch
+     * @param name Name of the job
+     * @param restrictions Array of restrictions to be passed
+     * @return Created project
+     * @throws IOException
+     */
+    public static <T extends TopLevelItem> T createJob(JenkinsRule j, Class<T> type, String name, JobCauseRestriction ... restrictions)
+            throws IOException {
+        T job = j.jenkins.<T>createProject(type, name);
+        //TODO: prettify conversion
+        JobRestrictionPropertyBuider builder = JobRestrictionPropertyBuider.create();
+        for (JobCauseRestriction r : restrictions) {
+            builder.addCauseRestriction(r);
+        }
         builder.applyTo((Job)job);
         return job;
     }
