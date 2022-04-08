@@ -38,7 +38,6 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 @Restricted(NoExternalUse.class)
 public class QueueHelper {
 
-    //TODO: Optimize by StringBuilder
     /**
      * Generates job-style project name for the buildable item.
      * @deprecated as of 0.9. Use {@link #getName(Queue.BuildableItem, boolean)}.
@@ -57,7 +56,7 @@ public class QueueHelper {
      * @param shortName Boolean whether to ignore the path (Folders) and only match the pipeline's name.
      * @return String in the {@link Job#getFullName()} format 'Folder/SubFolder/.../Pipeline'. If shortName is true, only 'Pipeline'.
      */
-    static String getName(@Nonnull Queue.BuildableItem item, boolean shortName) {
+    public static String getName(@Nonnull Queue.BuildableItem item, boolean shortName) {
         Queue.Task current = item.task;
         String res = getItemName(current, shortName);
 
